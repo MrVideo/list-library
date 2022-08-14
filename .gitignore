@@ -11,3 +11,5 @@ list-library.iml
 modules.xml
 vcs.xml
 .idea
+# File system
+.DS_Store
