@@ -5,49 +5,83 @@
 #include <string.h>
 
 int size(list l) {
-    if(l == NULL)
-        return 0;
-    else
-        return 1 + size(l -> next);
+    list curr = l;
+    int i = 0;
+    while(curr != NULL) {
+        ++i;
+        curr = curr -> next;
+    }
+    return i;
 }
 
 list add(list l, char *new_data) {
-    if(l == NULL) {
-        struct node *tmp = malloc(sizeof(struct node));
-        tmp -> data = new_data;
+    list curr = l, prev = NULL;
+    if(curr == NULL) {
+        list tmp = malloc(sizeof(struct node));
+        tmp -> data = strdup(new_data);
         tmp -> next = l;
         return tmp;
     } else {
-        l -> next = add(l -> next, new_data);
+        while(curr != NULL) {
+            prev = curr;
+            curr = curr -> next;
+        }
+        list tmp = malloc(sizeof(struct node));
+        tmp -> data = strdup(new_data);
+        tmp -> next = NULL;
+        if(prev != NULL)
+            prev -> next = tmp;
         return l;
     }
 }
 
 list delete(list l, char *to_delete) {
-    if(l != NULL) {
-        if(l -> data == to_delete) {
-            list tmp = l;
-            l = l -> next;
+    list curr = l, prev = NULL;
+    if(curr == NULL)
+        return NULL;
+    while(curr != NULL) {
+        if(strcmp(curr -> data, to_delete) == 0) {
+            list tmp = curr;
+            curr = curr -> next;
+            if(prev != NULL)
+                prev -> next = curr;
             free(tmp);
-        } else l -> next = delete(l -> next, to_delete);
+            if(prev != NULL) return l;
+            else return curr;
+        }
+        prev = curr;
+        curr = curr -> next;
     }
     return l;
 }
 
 list search(list l, char *query) {
-    if(l == NULL || !strcmp(l -> data, query))
-        return l;
-    else
-        return search(l -> next, query);
+    list curr = l;
+    while(curr != NULL) {
+        if(strcmp(curr -> data, query) == 0)
+            return curr;
+        curr = curr -> next;
+    }
+    return NULL;
 }
 
-void print(list l) {
-    if (l == NULL)
-        printf("END\n");
-    else {
-        printf("%s -> ", l -> data);
-        print(l -> next);
+void print_inline(list l) {
+    list curr = l;
+    while(curr != NULL) {
+        printf("%s -> ", curr -> data);
+        curr = curr -> next;
     }
+    printf("END\n");
+}
+
+void print_newline(list l) {
+    list curr = l;
+    while(curr != NULL) {
+        printf("%s\n", curr -> data);
+        printf("|\n");
+        curr = curr -> next;
+    }
+    printf("END\n");
 }
 
 list add_sort(list l, char *new_data) {
@@ -99,4 +133,20 @@ list add_sort(list l, char *new_data) {
     }
     //This gets executed in case of an error
     return NULL;
+}
+
+list duplicate(list l) {
+    list curr = l, prev = NULL, head = NULL;
+    while(curr != NULL) {
+        list tmp = malloc(sizeof(struct node));
+        tmp -> data = strdup(curr -> data);
+        tmp -> next = NULL;
+        if(head == NULL)
+            head = tmp;
+        else
+            prev -> next = tmp;
+        prev = tmp;
+        curr = curr -> next;
+    }
+    return head;
 }
